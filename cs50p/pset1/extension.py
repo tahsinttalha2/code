@@ -1,13 +1,18 @@
-ans = input().lower().strip()
+ans = input("File Name: ").lower().strip()
 
-ans = ans.split('.')
-if ans[1] == 'jpg' or ans[1] == 'jpeg':
-    print("image/jpeg")
-elif ans[1] == 'pdf' or ans[1] == 'zip':
-    print(f"application/{ans[1]}")
-elif ans[1] == 'txt':
-    print("text/plain")
-elif ans[1] == 'png' or ans[1] == 'gif':
-    print(f"image/{ans[1]}")
+if ans.find(".") != -1:
+    ans = ans.split('.')
+    print(ans)
+    i = len(ans) - 1
+    if ans[i] == 'jpg' or ans[i] == 'jpeg':
+        print("image/jpeg")
+    elif ans[i] == 'pdf' or ans[i] == 'zip':
+        print(f"application/{ans[i]}")
+    elif ans[i] == 'txt':
+        print("text/plain")
+    elif ans[i] == 'png' or ans[i] == 'gif':
+        print(f"image/{ans[i]}")
+    else :
+        print("application/octet-stream")
 else :
-    print("application/octet-stream")
+        print("application/octet-stream")
