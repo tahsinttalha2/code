@@ -7,7 +7,6 @@ for i in s:
     if i.isupper() == True:
         string.append(s[a:b])
         a = b
-        print(a)
     b += 1
 string.append(s[a:])
 
