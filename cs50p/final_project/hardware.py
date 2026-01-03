@@ -27,7 +27,7 @@ class SystemValidation:
 
 class DataCollection:
     def get_cpu_usage(self):
-        return psutil.cpu_percent(interval=0.1)
+        return psutil.cpu_percent()
     
     def get_ram_usage(self):
         return round(psutil.virtual_memory().percent, 1)
