@@ -13,5 +13,8 @@ def main():
         collect = DataCollection()
 
         FileHandling().add_data(collect.get_cpu_usage(), collect.get_gpu_usage(), collect.get_ram_usage(), collect.get_time(strt_time))
+
+
 if __name__ == "__main__":
     main()
+
