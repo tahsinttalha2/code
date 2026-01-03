@@ -1,8 +1,10 @@
 import streamlit as st
-from hardware import SystemValidation, DataCollection
-from data_handler import FileHandling
-import time
+import os
 from sys import exit
+import sys
+import subprocess
+from hardware import SystemValidation
+import signal
 
 # prints badges based on gpu validation from SystemValidation
 def is_gpu():
@@ -23,7 +25,10 @@ def is_gpu():
 if "monitor_btn_clicked" not in st.session_state:
     st.session_state.monitor_btn_clicked = False
     st.session_state.second_window_clear = False
+    st.session_state.engine_start = False
 
+if "record_pid" not in st.session_state:
+    st.session_state.record_pid = None
 
 def monitor_btn_clicked():  # initiates the monitoring
     st.session_state.monitor_btn_clicked = True
@@ -40,7 +45,7 @@ def begining():
 
     # just some fancy UX
     with st.status("Please wait while we test your system's eligibility...", state="running") as status:
-        time.sleep(1.3)
+        #time.sleep(1)
         status.update(
             label="Done", 
             state="complete", 
@@ -73,22 +78,19 @@ def termination(string):
     if string == "monitor_btn_clicked":
         st.session_state.monitor_btn_clicked = False
         st.session_state.second_window_clear = True
+        st.session_state.engine_start = True
     else:
         st.session_state.second_window_clear = False
+        st.session_state.engine_start = False
 
-strt_time = time.time()
-
-# start monitoring the system every second
-@st.fragment(run_every=1)
+# start monitoring the system and record data on record.py
 def run_monitoring():
-    clct = DataCollection()
-    FileHandling().add_data(clct.get_cpu_usage(), clct.get_gpu_usage(), clct.get_ram_usage(), clct.get_time(strt_time))
+    process = subprocess.Popen([sys.executable, "record.py"])
+    st.session_state.record_pid = process.pid
 
 def main():
     # this is the main executing block
     if st.session_state.monitor_btn_clicked:
-        global strt_time
-        FileHandling().create_file()
         run_monitoring()
 
         #   <------ termination happens here ------->
@@ -99,6 +101,8 @@ def main():
         #   <--------------------------------------->
 
     elif st.session_state.second_window_clear:
+        if st.session_state.record_pid is not None:
+            os.kill(st.session_state.record_pid, signal.SIGTERM)
         st.write("Second Window Clear!")
     
     # this block will only run in the first time
